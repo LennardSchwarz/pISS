@@ -4,49 +4,45 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://demos.lightstreamer.com/commons/require.js"></script>
     <script src="https://demos.lightstreamer.com/commons/lightstreamer.min.js"></script>
-
 </head>
-<body class="bg-offwhite h-screen flex flex-col justify-between items-center">
-    <div class="text-center mt-20">
-        <div class="text-2xl font-bold mb-4">ISS Space Station urine tank level is <span id="urine-tank-level" class="font-mono"></span>%</div>
-        <div class="text-lg">Last updated <span id="urine-tank-level-update-seconds" class="font-mono"></span> seconds ago.</div>
+<body class="bg-offwhite h-screen flex justify-center items-center relative">
+    <div id="color-bar" class="absolute bottom-0 left-0 w-full bg-urine bg-opacity-0 transition-height duration-500 ease-in-out"></div>
+    <div class="z-10 text-center">
+        <div class="text-xl font-bold mb-4">ISS Space Station urine tank level is <span id="urine-tank-level" class="font-mono"></span>%</div>
+        <div class="text-md">Last event received <span id="urine-tank-level-update-seconds" class="font-mono"></span> seconds ago.</div>
     </div>
-
-    <div id="color-bar" class="w-full transition-all duration-500 ease-in-out"></div>
     <script>
-            require(["LightstreamerClient", "Subscription"], function (LightstreamerClient, Subscription) {
-                var client = new LightstreamerClient("https://push.lightstreamer.com", "ISSLIVE");
-                client.connect();
+        require(["LightstreamerClient", "Subscription"], function (LightstreamerClient, Subscription) {
+            var client = new LightstreamerClient("https://push.lightstreamer.com", "ISSLIVE");
+            client.connect();
 
-                var lastUpdateTimestamp = null;
+            var lastUpdateTimestamp = null;
 
-                var subUrineTank = new Subscription("MERGE", ["NODE3000005"], ["Value", "TimeStamp"]);
-                subUrineTank.addListener({
-                    onItemUpdate: function (update) {
-                        var value = update.getValue("Value");
-                        var element = document.getElementById("urine-tank-level");
-                        element.innerText = value;
+            var subUrineTank = new Subscription("MERGE", ["NODE3000005"], ["Value", "TimeStamp"]);
+            subUrineTank.addListener({
+                onItemUpdate: function (update) {
+                    var value = update.getValue("Value");
+                    var element = document.getElementById("urine-tank-level");
+                    element.innerText = value;
 
-                        lastUpdateTimestamp = new Date().getTime();
+                    lastUpdateTimestamp = new Date().getTime();
 
-                        // Update color bar height
-                        var colorBar = document.getElementById("color-bar");
-                        var urineTankLevel = Math.min(value, 100);
-                        colorBar.style.height = 100 + "%";
-
-                        //colorBar.style.height = urineTankLevel + "%";
-                        colorBar.classList.add("bg-urine");
-                    }
-                });
-                client.subscribe(subUrineTank);
-
-                setInterval(function () {
-                    if (lastUpdateTimestamp !== null) {
-                        var secondsAgo = Math.floor((new Date().getTime() - lastUpdateTimestamp) / 1000);
-                        document.getElementById("urine-tank-level-update-seconds").innerText = secondsAgo;
-                    }
-                }, 1000);
+                    // Update color bar height
+                    var colorBar = document.getElementById("color-bar");
+                    var urineTankLevel = Math.min(value, 100);
+                    colorBar.style.height = urineTankLevel + "%";
+                    colorBar.classList.replace("bg-opacity-0", "bg-opacity-100");
+                }
             });
+            client.subscribe(subUrineTank);
+
+            setInterval(function () {
+                if (lastUpdateTimestamp !== null) {
+                    var secondsAgo = Math.floor((new Date().getTime() - lastUpdateTimestamp) / 1000);
+                    document.getElementById("urine-tank-level-update-seconds").innerText = secondsAgo;
+                }
+            }, 1000);
+        });
     </script>
 </body>
 <style>
@@ -70,6 +66,10 @@
 
     .bg-offwhite {
         background-color: #f8f8ff; /* Off white) */
+    }
+
+    .transition-height {
+        transition: height 0.5s;
     }
 </style>
 </html>
