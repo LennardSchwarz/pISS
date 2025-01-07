@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+</head>
+<body>
+    <div>ISS Space Station urine tank level is <span id="urine-tank-level"></span>%</div>
+    <div>Last updated <span id="urine-tank-level-update-seconds"></span> seconds ago.</div>
+
+    <script src="https://demos.lightstreamer.com/commons/require.js"></script>
+    <script src="https://demos.lightstreamer.com/commons/lightstreamer.min.js"></script>
+    <script>
+        require(["LightstreamerClient", "Subscription"], function (LightstreamerClient, Subscription) {
+            var client = new LightstreamerClient("https://push.lightstreamer.com", "ISSLIVE");
+            client.connect();
+
+            var lastUpdateTimestamp = null;
+
+            var subUrineTank = new Subscription("MERGE", ["NODE3000005"], ["Value", "TimeStamp"]);
+            subUrineTank.addListener({
+                onItemUpdate: function (update) {
+                    var value = update.getValue("Value");
+                    var element = document.getElementById("urine-tank-level");
+                    element.innerText = value;
+
+                    lastUpdateTimestamp = new Date().getTime();
+                }
+            });
+            client.subscribe(subUrineTank);
+
+
+            setInterval(function() {
+                if (lastUpdateTimestamp !== null) {
+                    var secondsAgo = Math.floor((new Date().getTime() - lastUpdateTimestamp) / 1000);
+                    document.getElementById("urine-tank-level-update-seconds").innerText = secondsAgo;
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
