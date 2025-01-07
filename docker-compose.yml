@@ -1,5 +1,5 @@
 services:
-  piss:
+  server:
     build: .
     networks:
       - traefik-proxy
