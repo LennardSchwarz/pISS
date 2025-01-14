@@ -1,6 +1,7 @@
 services:
   server:
     build: .
+    pull_policy: build
     networks:
       - external-network
     labels:
