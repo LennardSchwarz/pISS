@@ -2,7 +2,7 @@ services:
   server:
     build: .
     networks:
-      - traefik-proxy
+      - external-network
     labels:
       traefik.enable: true
       traefik.http.routers.piss.rule: Host(`piss.lennardschwarz.me`) # set router name and subdomain
@@ -11,5 +11,5 @@ services:
       traefik.http.routers.piss.tls.certresolver: letsencryptresolver # set ssl resolver to use for this route
 
 networks:
-  traefik-proxy:
+  external-network:
     external: true # hook into public network instead of creating our own
