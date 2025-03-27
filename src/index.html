@@ -10,9 +10,9 @@
 <body class="bg-offwhite h-screen flex justify-center items-center relative">
     <div id="color-bar" class="absolute bottom-0 left-0 w-full bg-urine bg-opacity-0 transition-height duration-500 ease-in-out wavy-bg"></div>
     <div class="z-10 text-center font-mono">
-        <div class="text-2xl lg:text-xl font-bold mb-4">ISS Space Station urine tank level is at <span id="urine-tank-level"></span>%</div>
-        <div class="text-xl lg:text-lg mb-4">The urine processor is currently <span id="urine-processor-status"></span></div>
-        <div class="text-xl lg:text-lg">Last update received <span id="urine-tank-update-seconds"></span> seconds ago.</div>
+        <div class="text-xl lg:text-lg font-bold my-4">ISS Space Station urine tank level is at <span id="urine-tank-level"></span>%</div>
+        <div class="text-lg lg:text-sm mb-4">The urine processor is currently <span id="urine-processor-status"></span>.</div>
+        <div class="text-lg lg:text-sm">Last update received <span id="urine-tank-update-seconds"></span> seconds ago.</div>
         </div>
     <script>
         require(["LightstreamerClient", "Subscription"], function (LightstreamerClient, Subscription) {
