@@ -1,6 +1,6 @@
 # pISS
 
-[piss.lennardschwarz.me](https://piss.lennardschwarz.me) shows the current urine tank level of the ISS Space Station.
+[piss.lenn.rocks](https://piss.lenn.rocks) shows the current urine tank level of the ISS Space Station.
 
 It uses NASA's official public ISS telemetry stream via [Lightstreamer](https://lightstreamer.com/).
 
