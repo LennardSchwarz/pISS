@@ -7,9 +7,10 @@
 </head>
 <body class="bg-offwhite h-screen flex justify-center items-center relative">
     <div id="color-bar" class="absolute bottom-0 left-0 w-full bg-urine bg-opacity-0 transition-height duration-500 ease-in-out wavy-bg"></div>
-    <div class="z-10 text-center">
-        <div class="text-4xl font-bold mb-4">ISS Space Station urine tank level is at <span id="urine-tank-level" class="font-mono"></span>%</div>
-        <div class="text-2xl">Last data received <span id="urine-tank-level-update-seconds" class="font-mono"></span> seconds ago.</div>
+    <div class="z-10 text-center font-mono">
+        <div class="text-4xl font-bold mb-4">ISS Space Station urine tank level is at <span id="urine-tank-level"></span>%</div>
+        <div class="text-2xl mb-4">The urine processor is currently <span id="urine-processor-status"></span></div>
+        <div class="text-2xl">Last update received <span id="urine-tank-update-seconds"></span> seconds ago.</div>
     </div>
     <script>
         require(["LightstreamerClient", "Subscription"], function (LightstreamerClient, Subscription) {
@@ -36,13 +37,48 @@
             });
             client.subscribe(subUrineTank);
 
+            // Add subscription for urine processor status
+            var subUrineProcessor = new Subscription("MERGE", ["NODE3000004"], ["Value", "TimeStamp"]);
+            subUrineProcessor.addListener({
+                onItemUpdate: function (update) {
+                    var value = update.getValue("Value");
+                    var element = document.getElementById("urine-processor-status");
+                    element.innerText = getUPAStatus(value);
+                    lastProcessorUpdateTimestamp = new Date().getTime();
+                }
+            });
+            client.subscribe(subUrineProcessor);
+
             setInterval(function () {
                 if (lastUpdateTimestamp !== null) {
                     var secondsAgo = Math.floor((new Date().getTime() - lastUpdateTimestamp) / 1000);
-                    document.getElementById("urine-tank-level-update-seconds").innerText = secondsAgo;
+                    document.getElementById("urine-tank-update-seconds").innerText = secondsAgo;
                 }
             }, 1000);
         });
+
+
+        function getUPAStatus(value) {
+            // Convert numeric status to human-readable form with emoji
+            switch (parseInt(value)) {
+                case 2:
+                    return "stopped ⏹️";
+                case 4:
+                    return "shutdown 🔌";
+                case 8:
+                    return "in maintenance 🔧";
+                case 16:
+                    return "operational ✅"
+                case 32:
+                    return "on standby ⏳"
+                case 64:
+                    return "idle 💤";
+                case 128:
+                    return "initializing system 🔄";
+                default:
+                    return "in unknow state ❓";
+            }
+        }
     </script>
 </body>
 <style>
