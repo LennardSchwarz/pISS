@@ -25,8 +25,3 @@ See [gh action deploy.yml](.github/workflows/deploy.yml).
 #### DNS
 
 Set DNS entries for website.
-
-## Todos
-
-- Add favicon
-- Optimize for mobile
